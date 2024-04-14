@@ -33,6 +33,7 @@ Result oafInitAndRun(void);
 void oafUpdate(void);
 void oafFinish(void);
 void oafSleep(void);
+void oafWakeup(void);
 
 #ifdef __cplusplus
 } // extern "C"

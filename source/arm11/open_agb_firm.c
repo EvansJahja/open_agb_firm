@@ -95,6 +95,7 @@ static OafConfig g_oafConfig =
 	14     // defaultSave
 };
 static KHandle g_frameReadyEvent = 0;
+static bool g_isSleeping = false;
 
 
 
@@ -617,6 +618,7 @@ Result oafInitAndRun(void)
 
 void oafUpdate(void)
 {
+	if (g_isSleeping) return;
 	const u32 *const maps = g_oafConfig.buttonMaps;
 	const u32 kHeld = hidKeysHeld();
 	u16 pressed = 0;
@@ -643,7 +645,7 @@ void oafFinish(void)
 
 void oafSleep(void)
 {
-	
+	if(g_isSleeping) return;	
 	// const GfxBl lcd = (MCU_getSystemModel() != SYS_MODEL_2DS ? GFX_BL_TOP : GFX_BL_BOT);
     // GFX_powerOffBacklight(lcd);
     LGYCAP_stop(LGYCAP_DEV_TOP);
@@ -652,10 +654,22 @@ void oafSleep(void)
 
     CODEC_setVolumeOverride(-128);
     GFX_enterLowPowerState();
-    // GFX_powerOnBacklight(lcd);
-    GFX_returnFromLowPowerState();
+
+	g_isSleeping = true;
+}
+
+void oafWakeup(void)
+{
+	if (!g_isSleeping) return;
+	GFX_returnFromLowPowerState();
+	MCU_setWifiLedState(true);
+	// GFX_powerOnBacklight(lcd);
+    
     
     LGYCAP_start(LGYCAP_DEV_TOP);
 	IRQ_enable(IRQ_CDMA_EVENT0);
     CODEC_setVolumeOverride(127);
+
+	g_isSleeping = false;
+
 }
