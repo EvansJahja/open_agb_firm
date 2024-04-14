@@ -43,6 +43,7 @@
 #include "arm11/patch.h"
 #include "arm11/bitmap.h"
 
+#include "arm11/drivers/interrupt.h"
 
 #define OAF_WORK_DIR        "sdmc:/3ds/open_agb_firm"
 #define OAF_SAVE_DIR        "saves"       // Relative to work dir.
@@ -638,4 +639,23 @@ void oafFinish(void)
 	LGYCAP_deinit(LGYCAP_DEV_TOP);
 	g_frameReadyEvent = 0;
 	LGY11_deinit();
+}
+
+void oafSleep(void)
+{
+	
+	// const GfxBl lcd = (MCU_getSystemModel() != SYS_MODEL_2DS ? GFX_BL_TOP : GFX_BL_BOT);
+    // GFX_powerOffBacklight(lcd);
+    LGYCAP_stop(LGYCAP_DEV_TOP);
+    IRQ_disable(IRQ_CDMA_EVENT0);
+    clearEvent(g_frameReadyEvent);
+
+    CODEC_setVolumeOverride(-128);
+    GFX_enterLowPowerState();
+    // GFX_powerOnBacklight(lcd);
+    GFX_returnFromLowPowerState();
+    
+    LGYCAP_start(LGYCAP_DEV_TOP);
+	IRQ_enable(IRQ_CDMA_EVENT0);
+    CODEC_setVolumeOverride(127);
 }
