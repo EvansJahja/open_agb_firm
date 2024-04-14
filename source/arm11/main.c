@@ -42,8 +42,8 @@ int main(void)
 		{
 			hidScanInput();
 			if(hidGetExtraKeys(0) & (KEY_POWER_HELD | KEY_POWER)) break;
-			if(hidGetExtraKeys(0) & KEY_HOME) oafSleep();
-			if(!(hidGetExtraKeys(0) & KEY_HOME)) oafWakeup();
+			if(hidGetExtraKeys(0) & KEY_SHELL) oafSleep();
+			if(!(hidGetExtraKeys(0) & KEY_SHELL)) oafWakeup();
 
 			oafUpdate();
 		}

@@ -646,14 +646,12 @@ void oafFinish(void)
 void oafSleep(void)
 {
 	if(g_isSleeping) return;	
-	// const GfxBl lcd = (MCU_getSystemModel() != SYS_MODEL_2DS ? GFX_BL_TOP : GFX_BL_BOT);
     LGYCAP_stop(LGYCAP_DEV_TOP);
     IRQ_disable(IRQ_CDMA_EVENT0);
     clearEvent(g_frameReadyEvent);
 
     CODEC_setVolumeOverride(-128);
     GFX_sleep();
-	
 	g_isSleeping = true;
 }
 
@@ -664,12 +662,10 @@ void oafWakeup(void)
 	// VRAM is cleared upon waking up
 	// need to readjust screen after waking up
 	adjustGammaTableForGba();
-	MCU_setWifiLedState(true);
     
     LGYCAP_start(LGYCAP_DEV_TOP);
 	IRQ_enable(IRQ_CDMA_EVENT0);
     CODEC_setVolumeOverride(127);
-
 	g_isSleeping = false;
 
 }
